@@ -20,11 +20,27 @@
       "permissions": [
         "android.permission.READ_CONTACTS",
         "android.permission.CALL_PHONE",
-        "android.permission.RECORD_AUDIO"
-      ]
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"
+      ],
+      "package": "com.voice.voicify"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-audio",
+      "expo-contacts",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "jdkVersion": 21
+          }
+        }
+      ]
+    ]
   }
 }
