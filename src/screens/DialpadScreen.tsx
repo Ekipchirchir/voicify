@@ -1,10 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import * as Linking from 'expo-linking';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Colors } from '@/constants/colors';
 import KeypadButton from '@/components/dialpad/KeypadButton';
 import { useDialTone } from '@/hooks/useDialTone';
+
+type RootStackParamList = {
+  ActiveCallScreen: {
+    phoneNumber: string;
+    direction: 'outgoing' | 'incoming';
+  };
+};
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'ActiveCallScreen'>;
 
 const KEYPAD_DATA = [
   [{ num: '1', letters: '' }, { num: '2', letters: 'ABC' }, { num: '3', letters: 'DEF' }],
@@ -14,6 +24,7 @@ const KEYPAD_DATA = [
 ];
 
 export default function DialpadScreen() {
+  const navigation = useNavigation<NavigationProp>();
   const [phoneNumber, setPhoneNumber] = useState('');
   const { playKeyPressTone } = useDialTone();
 
@@ -28,8 +39,12 @@ export default function DialpadScreen() {
   };
 
   const handleInitiateCall = () => {
-    if (!phoneNumber) return;
-    Linking.openURL(`tel:${phoneNumber}`);
+    if (!phoneNumber.trim()) return;
+
+    navigation.navigate('ActiveCallScreen', {
+      phoneNumber,
+      direction: 'outgoing',
+    });
   };
 
   return (
@@ -56,7 +71,7 @@ export default function DialpadScreen() {
 
         <View style={styles.actionRow}>
           <View style={styles.actionPlaceholder} />
-          
+
           <TouchableOpacity
             style={styles.callButton}
             activeOpacity={0.8}
@@ -86,51 +101,13 @@ export default function DialpadScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.background,
-  },
-  displayContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
-  displayText: {
-    color: Colors.textPrimary,
-    fontSize: 36,
-    fontWeight: '600',
-    letterSpacing: 1,
-  },
-  keypadContainer: {
-    paddingBottom: 20,
-    alignItems: 'center',
-  },
-  row: {
-    flexDirection: 'row',
-  },
-  actionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '75%',
-    marginTop: 15,
-  },
-  actionPlaceholder: {
-    width: 50,
-  },
-  callButton: {
-    width: 65,
-    height: 65,
-    borderRadius: 33,
-    backgroundColor: Colors.callGreen,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backspaceButton: {
-    width: 50,
-    height: 50,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+  container: { flex: 1, backgroundColor: Colors.background },
+  displayContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 },
+  displayText: { color: Colors.textPrimary, fontSize: 36, fontWeight: '600', letterSpacing: 1 },
+  keypadContainer: { paddingBottom: 20, alignItems: 'center' },
+  row: { flexDirection: 'row' },
+  actionRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', width: '75%', marginTop: 15 },
+  actionPlaceholder: { width: 50 },
+  callButton: { width: 65, height: 65, borderRadius: 33, backgroundColor: Colors.callGreen, justifyContent: 'center', alignItems: 'center' },
+  backspaceButton: { width: 50, height: 50, justifyContent: 'center', alignItems: 'center' },
 });
